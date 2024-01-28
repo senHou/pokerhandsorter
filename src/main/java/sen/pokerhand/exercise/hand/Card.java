@@ -1,4 +1,4 @@
-package sen.pokerhand.exercise;
+package sen.pokerhand.exercise.hand;
 
 import java.util.Objects;
 
