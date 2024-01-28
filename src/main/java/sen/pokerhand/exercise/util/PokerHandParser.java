@@ -13,6 +13,10 @@ import sen.pokerhand.exercise.hand.PokerHandFactory;
 import static sen.pokerhand.exercise.constant.PokerHandTypeConstant.PLAYER_ONE;
 import static sen.pokerhand.exercise.constant.PokerHandTypeConstant.PLAYER_TWO;
 
+
+/**
+ * Poker hand parser, parse the input file and generate pokerhand list
+ */
 public class PokerHandParser {
 
     private final static Map<String, Integer> cardValueMap = new HashMap<>();
@@ -33,6 +37,11 @@ public class PokerHandParser {
         cardValueMap.put("A", 14);
     }
 
+    /**
+     * read the input file and generate a list
+     * @return a list contains all the data in the file
+     * @throws Exception
+     */
     public static List<String> readFile() throws Exception {
 
         List<String> data = new ArrayList<>();
