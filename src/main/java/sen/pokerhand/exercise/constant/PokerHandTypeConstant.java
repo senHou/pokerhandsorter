@@ -16,4 +16,12 @@ public class PokerHandTypeConstant {
     public final static int HIGH_CARD = 1;
 
     public final static int T = 10;
+
+    public final static int FOUR = 4;
+    public final static int THREE = 3;
+
+    public final static int TWO = 2;
+
+    public final static String PLAYER_ONE = "PLAYER_ONE";
+    public final static String PLAYER_TWO = "PLAYER_TWO";
 }

@@ -1,6 +1,7 @@
 package sen.pokerhand.exercise.hand;
 
 import sen.pokerhand.exercise.constant.PokerHandTypeConstant;
+import sen.pokerhand.exercise.util.PokerHandUtil;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,6 +16,11 @@ public class TwoPairs extends AbstractPokerHand {
     public TwoPairs(List<Card> cardList) {
         this.cardList = cardList;
         this.rank = PokerHandTypeConstant.TWO_PAIRS;
+        List<Integer> pairs = PokerHandUtil.getTwoPairs(cardList);
+        if (pairs != null && pairs.size() == 2) {
+            this.setLowPair(pairs.get(0));
+            this.setHighPair(pairs.get(1));
+        }
     }
 
     @Override

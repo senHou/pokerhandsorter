@@ -1,6 +1,6 @@
 package sen.pokerhand.exercise.util;
 
-import org.junit.jupiter.api.BeforeAll;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -73,14 +73,14 @@ public class PokerHandUtilTest {
         } else {
             list = PokerHandParser.generateCardList(data.split(" "));
         }
-        assertEquals(expected, PokerHandUtil.isFourOfKind(list));
+        assertEquals(expected, PokerHandUtil.isFullHouse(list));
     }
 
     @ParameterizedTest
     @CsvSource({
             "TC 7C 2C 9C TC, true",
             "9C TC JC 2D 2H, false",
-            "2C 3C 4C 5C 6C, false", // straight flush
+            "2C 3C 4C 5C 6C, true",
             ", false"})
     public void testIsFlush(String data, boolean expected) {
         List<Card> list;
@@ -95,7 +95,7 @@ public class PokerHandUtilTest {
 
     @ParameterizedTest
     @CsvSource({
-            "2C 3C 4C 5C 6C, false", // straight flush
+            "2C 3C 4C 5C 6C, true",
             "9C TC JC 2D 2H, false",
             "2C 3C 4D 5C 6H, true",
             ", false"})
@@ -195,7 +195,7 @@ public class PokerHandUtilTest {
         } else {
             list = PokerHandParser.generateCardList(data.split(" "));
         }
-        assertEquals(expected, PokerHandUtil.getKind(list, type));
+        assertEquals(expected, PokerHandUtil.getTheSameKind(list, type));
     }
 
     @Test
@@ -203,17 +203,17 @@ public class PokerHandUtilTest {
         String str1 = "2C 2S 3D 3C 5D";
         List<Card> cardList1 = PokerHandParser.generateCardList(str1.split(" "));
         List<Integer> expected1 = List.of(2, 3);
-        assertArrayEquals(expected1.toArray(), PokerHandUtil.getTwoPair(cardList1).toArray());
+        assertArrayEquals(expected1.toArray(), PokerHandUtil.getTwoPairs(cardList1).toArray());
 
 
         String str2 = "6C 6S 3D 3C 5D";
-        List<Card> cardList2 = PokerHandParser.generateCardList(str1.split(" "));
+        List<Card> cardList2 = PokerHandParser.generateCardList(str2.split(" "));
         List<Integer> expected2 = List.of(3, 6);
-        assertArrayEquals(expected2.toArray(), PokerHandUtil.getTwoPair(cardList2).toArray());
+        assertArrayEquals(expected2.toArray(), PokerHandUtil.getTwoPairs(cardList2).toArray());
 
         String str3 = "2C 2S 4D 3C 5D";
-        List<Card> cardList3 = PokerHandParser.generateCardList(str1.split(" "));
-        assertNull(PokerHandUtil.getTwoPair(cardList3));
+        List<Card> cardList3 = PokerHandParser.generateCardList(str3.split(" "));
+        assertNull(PokerHandUtil.getTwoPairs(cardList3));
     }
 
     @Test
@@ -243,15 +243,60 @@ public class PokerHandUtilTest {
 
 
         String str2 = "AC AS AD AH 5D";
-        List<Card> cardList2 = PokerHandParser.generateCardList(str.split(" "));
-        int[] actual2 = PokerHandUtil.getCardMatrix(cardList);
+        List<Card> cardList2 = PokerHandParser.generateCardList(str2.split(" "));
+        int[] actual2 = PokerHandUtil.getCardMatrix(cardList2);
 
         int[] expected2 = new int[14];
-        expected[4] = 1;
-        expected[13] = 4;
+        expected2[4] = 1;
+        expected2[13] = 4;
         assertArrayEquals(expected2, actual2);
 
         // null cardlist
         assertNull(PokerHandUtil.getCardMatrix(null));
     }
+
+
+    @Test
+    public void testCompareTwoListEmptyList() {
+
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            PokerHandUtil.compareList(null, null);
+        });
+
+        String expectedMessage = "Both cardlist cannot be empty";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    public void testCompareTwoListNotSameSize() {
+
+        List<Card> cardList1 = List.of(new Card(1, "S"), new Card(2, "H"));
+        List<Card> cardList2 = List.of(new Card(1, "S"));
+
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            PokerHandUtil.compareList(cardList1, cardList2);
+        });
+
+        String expectedMessage = "Both cardlist must be the same size";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+
+    @ParameterizedTest
+    @CsvSource({
+            "2C 2S 4D 3C 5D, 2C 2S 4D 3C 5D, 0",
+            "2C 2S 4D 3C AD, 2C 2S 4D 3C 5D, 1",
+            "2C 2S 4D 3C TD, 2C 2S 4D 3C AD, -1"})
+    public void testCompareTwoList(String data1, String data2, int expected) {
+        List<Card> cardList1 = PokerHandParser.generateCardList(data1.split(" "));
+        List<Card> cardList2 = PokerHandParser.generateCardList(data2.split(" "));
+
+        assertEquals(expected, PokerHandUtil.compareList(cardList1, cardList2));
+
+    }
+
 }
